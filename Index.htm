@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Aimbot Menu</title>
+    <style>
+        :root {
+            --bg-color: #050108;
+            --card-bg: #0d0d0d;
+            --neon-pink: #ff0055;
+            --text-gray: #b3b3b3;
+            --blue-accent: #1a73e8;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            overflow: hidden;
+            touch-action: none;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            width: 300px;
+            padding: 20px;
+            border-radius: 12px;
+            border: 2px solid var(--neon-pink);
+            box-shadow: 0 0 20px rgba(255, 0, 85, 0.4);
+            color: white;
+            position: relative;
+            z-index: 100;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .header h2 {
+            color: var(--neon-pink);
+            font-size: 18px;
+            letter-spacing: 2px;
+            margin: 0;
+            text-transform: uppercase;
+        }
+
+        .option {
+            background: #151515;
+            margin-bottom: 12px;
+            padding: 12px 15px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Switch UI */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 20px;
+        }
+
+        .switch input { opacity: 0; width: 0; height: 0; }
+
+        .slider-ui {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #333;
+            transition: .3s;
+            border-radius: 20px;
+        }
+
+        .slider-ui:before {
+            position: absolute;
+            content: "";
+            height: 14px; width: 14px;
+            left: 3px; bottom: 3px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider-ui { background-color: var(--neon-pink); }
+        input:checked + .slider-ui:before { transform: translateX(20px); }
+
+        .fov-container {
+            background: #151515;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .fov-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: var(--text-gray);
+        }
+
+        input[type=range] {
+            width: 100%;
+            accent-color: var(--blue-accent);
+        }
+
+        .footer-text {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            color: var(--neon-pink);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <div class="header">
+            <h2>AIMBOT</h2>
+        </div>
+
+        <div class="option">
+            <span>Aimbot</span>
+            <label class="switch">
+                <input type="checkbox" id="aimbotToggle">
+                <span class="slider-ui"></span>
+            </label>
+        </div>
+
+        <div class="option">
+            <span>Aumentar Precisão</span>
+            <label class="switch">
+                <input type="checkbox" id="precisionToggle" checked>
+                <span class="slider-ui"></span>
+            </label>
+        </div>
+
+        <div class="fov-container">
+            <div class="fov-header">
+                <span>FOV</span>
+                <span id="fovValue">10</span>
+            </div>
+            <input type="range" id="fovSlider" min="1" max="100" value="10">
+        </div>
+
+        <div class="footer-text">
+            Sensi Final: <span id="sensiDisplay">0</span>
+        </div>
+    </div>
+
+    <script type="module" src="engine.js"></script>
+    <script type="module" src="enginebundle.js"></script>
+</body>
+</html>
