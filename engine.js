@@ -2,10 +2,12 @@ export class SensitivityEngine {
   constructor(config = {}) {
     this.lastX = 0;
     this.lastY = 0;
+
     this.smoothing = config.smoothing ?? 0.35;
     this.maxDelta = config.maxDelta ?? 14;
     this.sensitivity = config.sensitivity ?? 1;
-    this.curve = config.curve ?? "bezier";
+
+    this.curve = config.curve ?? "linear";
     this.bezier = config.bezier ?? [0.2, 0.8, 0.3, 1];
   }
 
@@ -27,13 +29,18 @@ export class SensitivityEngine {
     const speed = Math.sqrt(dx * dx + dy * dy);
     const t = this.clamp(speed / 30, 0, 1);
 
-    let curveFactor = this.curve === "bezier" ? this.bezierCurve(t) : t;
+    const factor =
+      this.curve === "bezier"
+        ? this.bezierCurve(t)
+        : t;
 
-    const adjustedDX = dx * curveFactor * this.sensitivity;
-    const adjustedDY = dy * curveFactor * this.sensitivity;
+    const adjustedDX = dx * factor * this.sensitivity;
+    const adjustedDY = dy * factor * this.sensitivity;
 
-    const smoothX = this.lastX + (adjustedDX - this.lastX) * this.smoothing;
-    const smoothY = this.lastY + (adjustedDY - this.lastY) * this.smoothing;
+    const smoothX =
+      this.lastX + (adjustedDX - this.lastX) * this.smoothing;
+    const smoothY =
+      this.lastY + (adjustedDY - this.lastY) * this.smoothing;
 
     const finalX = this.clamp(smoothX, -this.maxDelta, this.maxDelta);
     const finalY = this.clamp(smoothY, -this.maxDelta, this.maxDelta);
@@ -43,4 +50,4 @@ export class SensitivityEngine {
 
     return { x: finalX, y: finalY };
   }
-}
+  }
