@@ -1,90 +1,96 @@
 import { SensitivityEngine } from "./engine.js";
 
-// Configurações base
-const configNormal = { smoothing: 0.35, maxDelta: 14 };
-const configPrecisao = { smoothing: 0.4, maxDelta: 12, curve: "bezier" };
+// ===== Configurações =====
+const configNormal = {
+  smoothing: 0.3,
+  maxDelta: 16,
+  curve: "linear"
+};
 
-// Engine inicial
-let engine = new SensitivityEngine(configPrecisao);
+const configPrecisao = {
+  smoothing: 0.45,
+  maxDelta: 10,
+  curve: "bezier"
+};
 
-// ===== Seletores da UI (CORRIGIDOS) =====
+// ===== Engine =====
+let engine = new SensitivityEngine(configNormal);
+
+// ===== UI =====
 const aimbotToggle = document.getElementById("aimbotToggle");
 const precisionToggle = document.getElementById("precisionToggle");
 const fovSlider = document.getElementById("fovSlider");
 const fovValue = document.getElementById("fovValue");
 const sensiDisplay = document.getElementById("sensiDisplay");
 
-// ===== Variáveis de toque =====
+// ===== Toque =====
 let lastTouch = null;
 let frameDX = 0;
 let frameDY = 0;
 
-// ===== Sincroniza engine com slider =====
+// ===== Sincroniza engine =====
 function syncEngine() {
-    const baseConfig = precisionToggle.checked
-        ? configPrecisao
-        : configNormal;
+  const sensi = Number(fovSlider.value) / 10;
 
-    const sensi = parseFloat(fovSlider.value) / 10;
+  const baseConfig = precisionToggle.checked
+    ? configPrecisao
+    : configNormal;
 
-    engine = new SensitivityEngine({
-        ...baseConfig,
-        sensitivity: sensi
-    });
+  engine = new SensitivityEngine({
+    ...baseConfig,
+    sensitivity: sensi
+  });
 
-    // Número acompanha o slider
-    sensiDisplay.innerText = aimbotToggle.checked
-        ? sensi.toFixed(2)
-        : "0";
+  fovValue.innerText = fovSlider.value;
+
+  sensiDisplay.innerText = aimbotToggle.checked
+    ? sensi.toFixed(2)
+    : "0";
 }
 
-// ===== Eventos da interface =====
-fovSlider.addEventListener("input", (e) => {
-    fovValue.innerText = e.target.value;
-    syncEngine();
-});
-
+// ===== Eventos UI =====
+fovSlider.addEventListener("input", syncEngine);
 precisionToggle.addEventListener("change", syncEngine);
 aimbotToggle.addEventListener("change", syncEngine);
 
-// ===== Toque =====
+// ===== Touch =====
 function onTouchMove(e) {
-    if (!aimbotToggle.checked) return;
+  if (!aimbotToggle.checked) return;
 
-    const touch = e.touches[0];
+  const touch = e.touches[0];
 
-    if (!lastTouch) {
-        lastTouch = touch;
-        return;
-    }
-
-    frameDX += touch.clientX - lastTouch.clientX;
-    frameDY += touch.clientY - lastTouch.clientY;
-
+  if (!lastTouch) {
     lastTouch = touch;
+    return;
+  }
+
+  frameDX += touch.clientX - lastTouch.clientX;
+  frameDY += touch.clientY - lastTouch.clientY;
+
+  lastTouch = touch;
 }
 
 // ===== Loop =====
 function loop() {
-    if (aimbotToggle.checked && (frameDX !== 0 || frameDY !== 0)) {
-        engine.process(frameDX, frameDY);
-        frameDX = 0;
-        frameDY = 0;
-    }
-    requestAnimationFrame(loop);
+  if (aimbotToggle.checked && (frameDX || frameDY)) {
+    engine.process(frameDX, frameDY);
+    frameDX = 0;
+    frameDY = 0;
+  }
+  requestAnimationFrame(loop);
 }
 
-// ===== Listeners globais =====
+// ===== Listeners =====
 document.addEventListener("touchstart", e => {
-    lastTouch = e.touches[0];
+  lastTouch = e.touches[0];
 }, { passive: true });
 
 document.addEventListener("touchmove", onTouchMove, { passive: true });
 
 document.addEventListener("touchend", () => {
-    lastTouch = null;
+  lastTouch = null;
 });
 
-// ===== Iniciar =====
+// ===== Start =====
 syncEngine();
 loop();
