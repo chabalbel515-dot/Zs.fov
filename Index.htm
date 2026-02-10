@@ -205,7 +205,16 @@ function assinar(valor){
     h=(h<<5)-h+valor.charCodeAt(i);
   return Math.abs(h).toString(36).toUpperCase().slice(0,6);
 }
-function entrar(){
+  function getDeviceId() {
+  let id = localStorage.getItem("DEVICE_ID");
+  if (!id) {
+    id = crypto.randomUUID();
+    localStorage.setItem("DEVICE_ID", id);
+  }
+  return id;
+  }
+  
+  function entrar(){
   if (localStorage.getItem("KEY_USADA"))
     return alert("Key já utilizada neste dispositivo");
 
