@@ -205,24 +205,33 @@ function assinar(valor){
     h=(h<<5)-h+valor.charCodeAt(i);
   return Math.abs(h).toString(36).toUpperCase().slice(0,6);
 }
-
 function entrar(){
+  if (localStorage.getItem("KEY_USADA"))
+    return alert("Key já utilizada neste dispositivo");
+
   const key = document.getElementById("key").value.trim();
   const partes = key.split("-");
-  if(partes.length !== 3 || partes[0] !== "AIM")
+
+  if (partes.length !== 3 || partes[0] !== "AIM")
     return alert("Key inválida");
 
   const expira = Number(partes[1]);
   const assinatura = partes[2];
+  const deviceId = getDeviceId();
 
-  if(assinar(expira + SEGREDO) !== assinatura)
-    return alert("Key inválida");
-
-  if(expira !== 0 && Date.now() > expira)
+  if (expira !== 0 && Date.now() > expira)
     return alert("Key expirada");
 
-  document.getElementById("login").style.display="none";
-  document.getElementById("menu").style.display="block";
+  const esperado = assinar(expira + deviceId + SEGREDO);
+  if (esperado !== assinatura)
+    return alert("Key não pertence a este dispositivo");
+
+  // trava a key
+  localStorage.setItem("KEY_USADA", key);
+
+  document.getElementById("login").style.display = "none";
+  document.getElementById("menu").style.display = "block";
+  }
 }
 </script>
 
