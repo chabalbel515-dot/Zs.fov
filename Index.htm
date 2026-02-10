@@ -157,7 +157,6 @@ input[type=range]{
 
 <!-- MOD MENU -->
 <div class="mod-menu" id="menu">
-
   <div class="mod-header">
     <span class="status-dot"></span>
     <h2>MOD MENU</h2>
@@ -167,7 +166,7 @@ input[type=range]{
     <div class="mod-item">
       <span>Aimbot</span>
       <label class="switch">
-        <input type="checkbox" id="aimbotToggle">
+        <input type="checkbox">
         <span class="slider-ui"></span>
       </label>
     </div>
@@ -175,7 +174,7 @@ input[type=range]{
     <div class="mod-item">
       <span>Aumentar Precisão</span>
       <label class="switch">
-        <input type="checkbox" id="precisionToggle">
+        <input type="checkbox">
         <span class="slider-ui"></span>
       </label>
     </div>
@@ -186,35 +185,36 @@ input[type=range]{
       <span>FOV</span>
       <span id="fovValue">10</span>
     </div>
-    <input type="range" id="fovSlider" min="1" max="100" value="10">
+    <input type="range" min="1" max="100" value="10">
   </div>
 
   <div class="mod-footer">
-    Sensi: <span id="sensiDisplay">0</span>
+    Online
   </div>
-
 </div>
 
 <script>
-/* LOGIN POR KEY */
+/* SISTEMA DE KEY */
 const SEGREDO = "AIMBOT_2026";
 
 function assinar(valor){
-  let h=0;
-  for(let i=0;i<valor.length;i++)
-    h=(h<<5)-h+valor.charCodeAt(i);
+  let h = 0;
+  for (let i = 0; i < valor.length; i++) {
+    h = (h << 5) - h + valor.charCodeAt(i);
+  }
   return Math.abs(h).toString(36).toUpperCase().slice(0,6);
 }
-  function getDeviceId() {
+
+function getDeviceId(){
   let id = localStorage.getItem("DEVICE_ID");
   if (!id) {
     id = crypto.randomUUID();
     localStorage.setItem("DEVICE_ID", id);
   }
   return id;
-  }
-  
-  function entrar(){
+}
+
+function entrar(){
   if (localStorage.getItem("KEY_USADA"))
     return alert("Key já utilizada neste dispositivo");
 
@@ -235,17 +235,12 @@ function assinar(valor){
   if (esperado !== assinatura)
     return alert("Key não pertence a este dispositivo");
 
-  // trava a key
   localStorage.setItem("KEY_USADA", key);
 
   document.getElementById("login").style.display = "none";
   document.getElementById("menu").style.display = "block";
-  }
 }
 </script>
 
-<script type="module" src="engine.js"></script>
-<script type="module" src="enginebundle.js"></script>
-
 </body>
-  </html>
+</html>
