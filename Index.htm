@@ -1,246 +1,96 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mod Menu</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Controle C++</title>
+    <style>
+        :root { --primary: #00f2ff; --bg: #0f172a; }
+        body { margin: 0; height: 100vh; background: var(--bg); display: flex; align-items: center; justify-content: center; font-family: 'Segoe UI', sans-serif; color: white; }
+        
+        /* Design do Painel */
+        .panel {
+            background: #1e293b;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border: 1px solid #334155;
+            text-align: center;
+            width: 280px;
+        }
 
-<style>
-*{
-  box-sizing:border-box;
-  font-family:'Segoe UI',sans-serif;
-}
+        h2 { margin-top: 0; font-size: 1.2rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 2px; }
 
-body{
-  margin:0;
-  height:100vh;
-  background:#050108;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-}
+        /* Status do Sistema */
+        .status-container { margin: 20px 0; padding: 10px; border-radius: 10px; background: #0f172a; }
+        #status-text { font-weight: bold; transition: 0.3s; }
+        .off { color: #f43f5e; }
+        .on { color: #10b981; text-shadow: 0 0 10px #10b981; }
 
-/* LOGIN */
-.login-card{
-  background:#1a002d;
-  padding:30px;
-  width:320px;
-  border-radius:18px;
-  box-shadow:0 0 40px #a020f0;
-  text-align:center;
-}
+        /* Botão de Ativação (Switch) */
+        .switch { position: relative; display: inline-block; width: 60px; height: 34px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #334155; transition: .4s; border-radius: 34px;
+        }
+        .slider:before {
+            position: absolute; content: ""; height: 26px; width: 26px; left: 4px; bottom: 4px;
+            background-color: white; transition: .4s; border-radius: 50%;
+        }
+        input:checked + .slider { background-color: #10b981; }
+        input:checked + .slider:before { transform: translateX(26px); }
 
-.login-card h1{
-  color:white;
-  margin-bottom:25px;
-}
-
-.login-card input{
-  width:100%;
-  padding:14px;
-  border-radius:12px;
-  border:none;
-  margin-bottom:20px;
-}
-
-.login-card button{
-  width:100%;
-  padding:14px;
-  border:none;
-  border-radius:14px;
-  background:linear-gradient(90deg,#b400ff,#ff00ff);
-  color:white;
-  font-size:18px;
-  font-weight:bold;
-}
-
-/* MOD MENU */
-.mod-menu{
-  width:320px;
-  background:#0b0b0b;
-  border-radius:16px;
-  padding:18px;
-  border:2px solid #ff0055;
-  box-shadow:0 0 25px rgba(255,0,85,.6);
-  color:white;
-  display:none;
-}
-
-.mod-header{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  justify-content:center;
-  margin-bottom:18px;
-}
-
-.mod-header h2{
-  margin:0;
-  letter-spacing:3px;
-  color:#ff0055;
-}
-
-.status-dot{
-  width:10px;
-  height:10px;
-  background:#00ff88;
-  border-radius:50%;
-  box-shadow:0 0 10px #00ff88;
-}
-
-.mod-section{
-  background:#151515;
-  padding:12px;
-  border-radius:12px;
-  margin-bottom:14px;
-}
-
-.mod-item{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:10px;
-}
-
-/* SWITCH */
-.switch{position:relative;width:42px;height:22px;}
-.switch input{display:none;}
-.slider-ui{
-  position:absolute;inset:0;
-  background:#333;border-radius:20px;
-}
-.slider-ui::before{
-  content:"";
-  position:absolute;
-  width:16px;height:16px;
-  left:3px;top:3px;
-  background:white;border-radius:50%;
-}
-.switch input:checked + .slider-ui{
-  background:#ff0055;
-  box-shadow:0 0 12px #ff0055;
-}
-.switch input:checked + .slider-ui::before{
-  transform:translateX(20px);
-}
-
-/* FOV */
-.fov-header{
-  display:flex;
-  justify-content:space-between;
-  font-size:14px;
-  margin-bottom:6px;
-  color:#aaa;
-}
-
-input[type=range]{
-  width:100%;
-  accent-color:#ff0055;
-}
-
-.mod-footer{
-  text-align:center;
-  font-weight:bold;
-  color:#ff0055;
-}
-</style>
+        .desc { font-size: 0.8rem; color: #64748b; margin-top: 15px; }
+    </style>
 </head>
-
 <body>
 
-<!-- LOGIN -->
-<div class="login-card" id="login">
-  <h1>Login</h1>
-  <input id="key" placeholder="Digite sua Key">
-  <button onclick="entrar()">Entrar</button>
-</div>
+    <div class="panel">
+        <h2>Sistema Magnético</h2>
+        
+        <div class="status-container">
+            Status: <span id="status-text" class="off">DESATIVADO</span>
+        </div>
 
-<!-- MOD MENU -->
-<div class="mod-menu" id="menu">
-  <div class="mod-header">
-    <span class="status-dot"></span>
-    <h2>MOD MENU</h2>
-  </div>
+        <label class="switch">
+            <input type="checkbox" id="toggle-btn">
+            <span class="slider"></span>
+        </label>
 
-  <div class="mod-section">
-    <div class="mod-item">
-      <span>Aimbot</span>
-      <label class="switch">
-        <input type="checkbox">
-        <span class="slider-ui"></span>
-      </label>
+        <p class="desc">Zs.xisFF</p>
     </div>
 
-    <div class="mod-item">
-      <span>Aumentar Precisão</span>
-      <label class="switch">
-        <input type="checkbox">
-        <span class="slider-ui"></span>
-      </label>
-    </div>
-  </div>
+    <script>
+        // Binário do C++ que gerencia o estado (0 ou 1)
+        const wasmCode = new Uint8Array([
+            0,97,115,109,1,0,0,0,1,133,128,128,128,0,1,96,1,127,1,127,3,130,128,128,128,0,1,0,7,139,128,128,128,0,1,7,111,110,95,111,102,102,0,0,10,143,128,128,128,0,1,137,128,128,128,0,0,32,0,65,1,111,11
+        ]);
 
-  <div class="mod-section">
-    <div class="fov-header">
-      <span>FOV</span>
-      <span id="fovValue">10</span>
-    </div>
-    <input type="range" min="1" max="100" value="10">
-  </div>
+        const statusText = document.getElementById('status-text');
+        const toggleBtn = document.getElementById('toggle-btn');
 
-  <div class="mod-footer">
-    Online
-  </div>
-</div>
+        WebAssembly.instantiate(wasmCode).then(results => {
+            // Função do C++ que inverte o sinal
+            const processarEstado = results.instance.exports.on_off;
 
-<script>
-/* SISTEMA DE KEY */
-const SEGREDO = "AIMBOT_2026";
+            toggleBtn.addEventListener('change', () => {
+                const valorAtual = toggleBtn.checked ? 1 : 0;
+                
+                // O C++ recebe o valor e valida a operação
+                const resultado = processarEstado(valorAtual);
 
-function assinar(valor){
-  let h = 0;
-  for (let i = 0; i < valor.length; i++) {
-    h = (h << 5) - h + valor.charCodeAt(i);
-  }
-  return Math.abs(h).toString(36).toUpperCase().slice(0,6);
-}
-
-function getDeviceId(){
-  let id = localStorage.getItem("DEVICE_ID");
-  if (!id) {
-    id = crypto.randomUUID();
-    localStorage.setItem("DEVICE_ID", id);
-  }
-  return id;
-}
-
-function entrar(){
-  if (localStorage.getItem("KEY_USADA"))
-    return alert("Key já utilizada neste dispositivo");
-
-  const key = document.getElementById("key").value.trim();
-  const partes = key.split("-");
-
-  if (partes.length !== 3 || partes[0] !== "AIM")
-    return alert("Key inválida");
-
-  const expira = Number(partes[1]);
-  const assinatura = partes[2];
-  const deviceId = getDeviceId();
-
-  if (expira !== 0 && Date.now() > expira)
-    return alert("Key expirada");
-
-  const esperado = assinar(expira + deviceId + SEGREDO);
-  if (esperado !== assinatura)
-    return alert("Key não pertence a este dispositivo");
-
-  localStorage.setItem("KEY_USADA", key);
-
-  document.getElementById("login").style.display = "none";
-  document.getElementById("menu").style.display = "block";
-}
-</script>
-
+                if (resultado === 1) {
+                    statusText.innerText = "ATIVADO";
+                    statusText.className = "on";
+                    document.body.style.boxShadow = "inset 0 0 100px rgba(16,185,129,0.2)";
+                } else {
+                    statusText.innerText = "DESATIVADO";
+                    statusText.className = "off";
+                    document.body.style.boxShadow = "none";
+                }
+            });
+        });
+    </script>
 </body>
 </html>
