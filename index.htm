@@ -3,101 +3,112 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel C++ WebAssembly</title>
+    <title>PAINEL SIELZADA V3</title>
+    <link rel="manifest" href="manifest.json">
     <style>
-        :root { --primary: #00f2ff; --bg: #0f172a; }
-        body { 
-            margin: 0; height: 100vh; background: var(--bg); 
-            display: flex; align-items: center; justify-content: center; 
-            font-family: 'Segoe UI', sans-serif; color: white; 
-            transition: 0.5s;
-        }
+        :root { --orange: #ff8c00; --bg: #050505; --card: rgba(20, 20, 20, 0.8); }
         
-        .panel {
-            background: #1e293b; padding: 30px; border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            border: 1px solid #334155; text-align: center; width: 280px;
+        body {
+            margin: 0; background-color: var(--bg); color: white;
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            display: flex; justify-content: center; align-items: center;
+            height: 100vh; overflow: hidden;
+            background: radial-gradient(circle at center, #1a1000 0%, #050505 100%);
         }
 
-        h2 { margin-top: 0; font-size: 1.1rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 2px; }
-
-        .status-container { 
-            margin: 20px 0; padding: 15px; border-radius: 10px; 
-            background: #0f172a; border: 1px solid #1e293b;
+        .container {
+            width: 90%; max-width: 380px;
+            background: var(--card); border: 1px solid rgba(255, 140, 0, 0.2);
+            border-radius: 25px; padding: 25px;
+            backdrop-filter: blur(10px); box-shadow: 0 0 30px rgba(0,0,0,0.5);
+            text-align: center;
         }
-        
-        #status-text { font-weight: bold; transition: 0.3s; }
-        .off { color: #f43f5e; }
-        .on { color: #10b981; text-shadow: 0 0 10px #10b981; }
 
-        .switch { position: relative; display: inline-block; width: 60px; height: 34px; }
+        h2 { font-size: 1.2rem; letter-spacing: 2px; margin-bottom: 25px; color: #eee; }
+
+        .option-row {
+            background: rgba(0, 0, 0, 0.4); border-radius: 15px;
+            padding: 12px 15px; margin-bottom: 12px;
+            display: flex; align-items: center; justify-content: space-between;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .info { display: flex; align-items: center; text-align: left; }
+        .icon { 
+            width: 40px; height: 40px; background: var(--orange); 
+            border-radius: 10px; margin-right: 15px;
+            display: flex; justify-content: center; align-items: center;
+            font-weight: bold; color: black;
+        }
+
+        .text b { display: block; font-size: 0.9rem; }
+        .text span { font-size: 0.7rem; color: #888; }
+
+        /* Switch Style */
+        .switch {
+            position: relative; display: inline-block; width: 40px; height: 22px;
+        }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider {
             position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
-            background-color: #334155; transition: .4s; border-radius: 34px;
+            background-color: #333; transition: .4s; border-radius: 34px;
         }
+        input:checked + .slider { background-color: var(--orange); }
         .slider:before {
-            position: absolute; content: ""; height: 26px; width: 26px; left: 4px; bottom: 4px;
-            background-color: white; transition: .4s; border-radius: 50%;
+            position: absolute; content: ""; height: 16px; width: 16px;
+            left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%;
         }
-        input:checked + .slider { background-color: #10b981; }
-        input:checked + .slider:before { transform: translateX(26px); }
+        input:checked + .slider:before { transform: translateX(18px); }
 
-        .desc { font-size: 0.8rem; color: #64748b; margin-top: 15px; font-family: monospace; }
+        .btn-main {
+            width: 100%; padding: 15px; background: var(--orange);
+            border: none; border-radius: 15px; color: black;
+            font-weight: bold; text-transform: uppercase; margin-top: 20px;
+            cursor: pointer; transition: 0.3s;
+        }
+        .btn-main:active { transform: scale(0.98); }
     </style>
 </head>
 <body>
 
-    <div class="panel">
-        <h2>Sistema Magnético</h2>
-        <div class="status-container">
-            Status: <span id="status-text" class="off">DESATIVADO</span>
+    <div class="container">
+        <h2>PAINEL SIELZADA V3</h2>
+
+        <div class="option-row">
+            <div class="info">
+                <div class="icon">◎</div>
+                <div class="text"><b>aimbot legit</b><span>Melhora o alinhamento da mira.</span></div>
+            </div>
+            <label class="switch"><input type="checkbox" id="aimbot"><span class="slider"></span></label>
         </div>
 
-        <label class="switch">
-            <input type="checkbox" id="toggle-btn">
-            <span class="slider"></span>
-        </label>
+        <div class="option-row">
+            <div class="info">
+                <div class="icon">⚙</div>
+                <div class="text"><b>reduzir lags</b><span>Remove os lags do jogo.</span></div>
+            </div>
+            <label class="switch"><input type="checkbox" id="lags"><span class="slider"></span></label>
+        </div>
 
-        <p class="desc">Zs.xisFF [WASM_CORE]</p>
+        <div class="option-row">
+            <div class="info">
+                <div class="icon">📱</div>
+                <div class="text"><b>melhorar 2x</b><span>Melhora sua mira 2x em até 10%.</span></div>
+            </div>
+            <label class="switch"><input type="checkbox" id="improve2x"><span class="slider"></span></label>
+        </div>
+
+        <div class="option-row">
+            <div class="info">
+                <div class="icon">🚀</div>
+                <div class="text"><b>aumentar desempenho</b><span>Otimização máxima de FPS.</span></div>
+            </div>
+            <label class="switch"><input type="checkbox" id="fps"><span class="slider"></span></label>
+        </div>
+
+        <button class="btn-main" onclick="openGame()">ABRIR FREE FIRE</button>
     </div>
 
-    <script>
-        // BINÁRIO COMPLETO E VÁLIDO (Compilado de C++)
-        // Este array contém o preâmbulo \0asm e as seções de Type, Function, Export e Code.
-        const wasmCode = new Uint8Array([
-            0x00, 0x61, 0x73, 0x6d, 0x01, 0x00, 0x00, 0x00, 0x01, 0x06, 0x01, 0x60, 
-            0x01, 0x7f, 0x01, 0x7f, 0x03, 0x02, 0x01, 0x00, 0x07, 0x0a, 0x01, 0x06, 
-            0x6f, 0x6e, 0x5f, 0x6f, 0x66, 0x66, 0x00, 0x00, 0x0a, 0x06, 0x01, 0x04, 
-            0x00, 0x20, 0x00, 0x0b
-        ]);
-
-        const statusText = document.getElementById('status-text');
-        const toggleBtn = document.getElementById('toggle-btn');
-
-        // Inicializa o WebAssembly
-        WebAssembly.instantiate(wasmCode).then(results => {
-            const processarEstado = results.instance.exports.on_off;
-
-            toggleBtn.addEventListener('change', () => {
-                const input = toggleBtn.checked ? 1 : 0;
-                
-                // Chamada da função compilada em C++
-                const resultado = processarEstado(input);
-
-                if (resultado === 1) {
-                    statusText.innerText = "ATIVADO";
-                    statusText.className = "on";
-                    document.body.style.background = "#020617";
-                    document.body.style.boxShadow = "inset 0 0 100px rgba(16,185,129,0.15)";
-                } else {
-                    statusText.innerText = "DESATIVADO";
-                    statusText.className = "off";
-                    document.body.style.background = "#0f172a";
-                    document.body.style.boxShadow = "none";
-                }
-            });
-        }).catch(err => console.error("Erro ao carregar WASM:", err));
-    </script>
+    <script type="module" src="enginebundle.js"></script>
 </body>
 </html>
