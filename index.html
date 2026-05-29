@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<button id="botao">Ativar</button>
+
+<script>
+let ativo = false;
+
+const botao = document.getElementById("botao");
+
+botao.addEventListener("click", () => {
+    ativo = !ativo;
+
+    if (ativo) {
+        botao.textContent = "Desativar";
+        console.log("Função ativada");
+    } else {
+        botao.textContent = "Ativar";
+        console.log("Função desativada");
+    }
+});
+
+document.addEventListener("touchmove", (e) => {
+    if (!ativo) return;
+
+    const toque = e.touches[0];
+    console.log("X:", toque.clientX, "Y:", toque.clientY);
+});
+</script>
+
+</body>
+</html>
